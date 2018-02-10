@@ -1,23 +1,20 @@
 const path = require('path');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    devtool: 'source-map',
-    entry: './src/index.js',
+    // devtool: 'inline-source-map',
+    entry: './src/browser/index.js',
     output: {
-        filename: '[name].bundle.js',
         path: path.join(__dirname, 'dist'),
-        publicPath: '/assets'
+        filename: './[name].bundle.js',
+        publicPath: './public'
     },
-    plugins: [
-        new webpack.optimize.UglifyJsPlugin({
-        minimize: true,
-            compress: {
-                warnings: false
-            }
-        })
-    ],
+    devServer: {
+      contentBase: "./dist",
+      publicPath: "./public"
+    },
+    devtool: 'cheap-module-source-map',
     module: {
         rules: [
             {
@@ -37,7 +34,13 @@ module.exports = {
             {
                 test: /\.(png|svg|jpg|gif)$/,
                 use: [
-                    'file-loader'
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'public/img/[name].[ext]',
+                            publicPath: url => url.replace(/public/, ''),
+                        }
+                    }
                 ]
             },
             {
@@ -48,11 +51,4 @@ module.exports = {
             }
         ]
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: './src/public/index.html',
-            filename: 'index.html',
-            inject: 'body',
-        }),
-    ],
 }

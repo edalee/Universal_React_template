@@ -1,39 +1,51 @@
-const path = require('path');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const autoprefixer = require('autoprefixer');
 
-module.exports = {
-    devtool: 'inline-source-map',
-    entry: './src/index.js',
+const browserConfig = {
+    entry: './src/browser/index.js',
     output: {
-        filename: '[name].bundle.js',
-        path: path.join(__dirname, 'dist'),
-        publicPath: './assets'
+        path: __dirname,
+        filename: './public/bundle.js',
     },
-    devServer: {
-      contentBase: "./dist",
-      publicPath: "./assets"
-    },
+    devtool: 'cheap-module-source-map',
     module: {
         rules: [
             {
                 test: /\.js$/,
-                exclude: /node_modules/,
-                use: { loader: 'babel-loader'}
+                exclude: /(node_modules)/,
+                loader: 'babel-loader',
+                query: {
+                    // babelrc: false,
+                    presets: ["react"]
+                }
             },
             {
                 test: /\.css$/,
                 exclude: /node_modules/,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                    'postcss-loader'
-                ]
+                use: ExtractTextPlugin.extract({
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: { importLoaders: 1}
+                        },
+                        {
+                            loader: 'postcss-loader',
+                            options: { plugins: [autoprefixer()]}
+                        },
+                    ]
+                })
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,
                 use: [
-                    'file-loader'
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'public/img/[name].[ext]',
+                            publicPath: url => url.replace(/public/, ''),
+                        }
+                    }
                 ]
             },
             {
@@ -45,10 +57,59 @@ module.exports = {
         ]
     },
     plugins: [
-        new HtmlWebpackPlugin({
-            template: './src/public/index.html',
-            filename: 'index.html',
-            inject: 'body',
-        }),
-    ],
+        new ExtractTextPlugin({
+            filename: 'public/css/[name].css'
+        })
+    ]
 }
+
+
+const serverConfig = {
+    entry: './src/server/index.js',
+    target: 'node',
+    output: {
+        path: __dirname,
+        filename: 'server.js',
+        libraryTarget: 'commonjs2'
+    },
+    devtool: 'cheap-module-source-map',
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /(node_modules)/,
+                loader: 'babel-loader',
+                query: {
+                    presets: ["react"]
+                }
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'css-loader/locals',
+                ]
+            },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'public/img/[name].[ext]',
+                            publicPath: url => url.replace(/public/, ''),
+                            emit: false
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/,
+                use: [
+                    'file-loader'
+                ]
+            }
+        ]
+    },
+}
+
+module.exports = [browserConfig, serverConfig];
