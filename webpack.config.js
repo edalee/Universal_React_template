@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
+const nodeExternals = require('webpack-node-externals');
 
 const browserConfig = {
     entry: './src/browser/index.js',
@@ -59,6 +60,11 @@ const browserConfig = {
     plugins: [
         new ExtractTextPlugin({
             filename: 'public/css/[name].css'
+        }),
+        new webpack.BannerPlugin({
+            banner: "__isBrowser__ = true;",
+            raw: true,
+            include: /\.js$/
         })
     ]
 }
@@ -67,6 +73,7 @@ const browserConfig = {
 const serverConfig = {
     entry: './src/server/index.js',
     target: 'node',
+    externals: [nodeExternals()],
     output: {
         path: __dirname,
         filename: 'server.js',
@@ -110,6 +117,13 @@ const serverConfig = {
             }
         ]
     },
-}
+    plugins: [
+        new webpack.BannerPlugin({
+          banner: "__isBrowser__ = false;",
+          raw: true,
+          include: /\.js$/
+        })
+    ]
+};
 
 module.exports = [browserConfig, serverConfig];

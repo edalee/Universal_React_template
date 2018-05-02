@@ -7,10 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start-dev": "NODE_ENV=development webpack -w & NODE_ENV=development node server.js"
   },
-  "author": "George Meehan",
+  "author": "Edward Lee",
   "license": "ISC",
   "devDependencies": {
-    "autoprefixer": "^7.2.5",
+    "autoprefixer": "^8.4.1",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.1",
     "babel-loader": "^7.1.2",
@@ -23,13 +23,22 @@
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.6",
     "helmet-webpack-plugin": "^0.0.3",
+    "nodemon": "^1.17.3",
     "postcss-loader": "^2.1.0",
     "prop-types": "^15.6.0",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "cors": "^2.8.4",
     "express": "^4.16.2",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash.orderby": "^4.6.0",
+    "node-time-ago": "^1.0.0",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "react-router-dom": "^4.2.2",
+    "serialize-javascript": "^1.5.0",
+    "source-map-support": "^0.5.5"
   }
 }
